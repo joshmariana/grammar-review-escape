@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Library of Lost Voices</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1f2433; --muted:#5b6070; --paper:#fbf6ea; --card:#ffffff; --line:#e3d9c2;
+  --navy:#22305a; --navy2:#2f4380; --gold:#d79b22; --gold-soft:#fbecc8;
+  --green:#23855c; --green-soft:#ddf3e8; --red:#c0392b; --red-soft:#fbe3df;
+  --blue-soft:#e3ebfb; --purple-soft:#ece4fb;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;background:var(--paper);color:var(--ink);font-size:18px;line-height:1.5;min-height:100vh}
+h1,h2,h3,.display{font-family:"Fredoka",system-ui,sans-serif;font-weight:600;line-height:1.2}
+h1{font-size:36px} h2{font-size:28px;margin-bottom:8px} h3{font-size:21px;margin-bottom:6px}
+p{margin-bottom:10px}
+.wrap{max-width:900px;margin:0 auto;padding:20px 16px 60px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:20px;margin-bottom:16px}
+.hero{background:linear-gradient(160deg,var(--navy),var(--navy2));color:#fff;border-radius:20px;padding:32px 24px;margin-bottom:18px;text-align:center}
+.hero p{color:#dfe5f7;max-width:620px;margin:10px auto}
+.hero .icon{font-size:56px}
+label{font-weight:700;display:block;margin:10px 0 4px}
+input[type=text],select,textarea{width:100%;font:inherit;padding:12px 14px;border:2px solid #c9c2ae;border-radius:12px;background:#fff;color:var(--ink)}
+textarea{min-height:90px;resize:vertical;font-size:20px}
+input:focus,select:focus,textarea:focus{outline:3px solid var(--gold);border-color:var(--gold)}
+.btn{font:inherit;font-weight:700;border:none;border-radius:12px;padding:12px 22px;cursor:pointer;background:var(--navy);color:#fff;transition:transform .05s,background .15s}
+.btn:hover{background:var(--navy2)} .btn:active{transform:translateY(1px)}
+.btn:disabled{background:#a7abb8;cursor:not-allowed}
+.btn.gold{background:var(--gold);color:#2a1d00} .btn.gold:hover{background:#c58a14}
+.btn.ghost{background:transparent;color:var(--navy);border:2px solid var(--navy)}
+.btn.small{padding:6px 12px;font-size:16px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.grid2{grid-template-columns:1fr} h1{font-size:28px}}
+/* HUD */
+.hud{position:sticky;top:0;z-index:5;background:var(--navy);color:#fff;padding:10px 16px}
+.hud .in{max-width:900px;margin:0 auto;display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:space-between;font-size:16px}
+.locks{display:flex;gap:6px}
+.lock{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#3b4a7a;font-size:17px}
+.lock.open{background:var(--gold)} .lock.now{outline:3px solid var(--gold)}
+/* map */
+.rooms{display:grid;gap:12px}
+.room-tile{display:flex;gap:14px;align-items:center;border:2px solid var(--line);border-radius:16px;padding:14px 16px;background:#fff}
+.room-tile .ico{font-size:34px;width:52px;text-align:center}
+.room-tile.locked{opacity:.55}
+.room-tile.done{background:var(--green-soft);border-color:#9fd6bb}
+.room-tile.current{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
+.digit{font-family:"Fredoka";font-size:26px;background:var(--gold);color:#2a1d00;border-radius:10px;padding:2px 12px;margin-left:auto}
+/* quiz */
+.progress{height:16px;background:#e9e1cc;border-radius:99px;overflow:hidden;margin:6px 0 4px}
+.progress>div{height:100%;background:var(--green);transition:width .3s}
+.prompt{font-size:22px;background:var(--blue-soft);border-radius:12px;padding:14px 16px;margin:10px 0}
+.tag{display:inline-block;font-size:14px;font-weight:700;border-radius:99px;padding:3px 12px;margin-right:6px}
+.tag.strong{background:var(--red-soft);color:var(--red)} .tag.mild{background:var(--blue-soft);color:var(--navy2)}
+.tag.gold{background:var(--gold-soft);color:#7a5200}
+.fb{border-radius:12px;padding:14px 16px;margin-top:14px}
+.fb.good{background:var(--green-soft);border:2px solid #9fd6bb}
+.fb.bad{background:var(--red-soft);border:2px solid #efb1a8}
+.fb.warn{background:var(--gold-soft);border:2px solid #efce87}
+.answer{font-size:20px;font-weight:700;background:#fff;border-radius:8px;padding:6px 10px;display:inline-block;margin-top:4px}
+.keys{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.keys button{font:inherit;font-weight:700;font-size:20px;min-width:46px;padding:6px 10px;border-radius:10px;border:2px solid #c9c2ae;background:#fff;cursor:pointer}
+details.rules{background:var(--gold-soft);border-radius:12px;padding:10px 16px;margin-bottom:16px}
+details.rules summary{cursor:pointer;font-weight:700}
+details.rules ul{margin:8px 0 4px 22px} details.rules li{margin-bottom:4px}
+/* sort */
+.sort-item{border:2px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;background:#fff}
+.sort-item .s{font-size:20px;margin-bottom:8px}
+.choice{font:inherit;font-weight:700;font-size:16px;border:2px solid #c9c2ae;background:#fff;border-radius:10px;padding:6px 12px;cursor:pointer;margin:2px 4px 2px 0}
+.choice.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.sort-item.right{border-color:var(--green);background:var(--green-soft)}
+.sort-item.wrong{border-color:var(--red);background:var(--red-soft)}
+/* tiles */
+.build{min-height:64px;border:3px dashed #c9c2ae;border-radius:12px;padding:10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:#fff}
+.tiles{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.tile{font:inherit;font-size:20px;font-weight:700;border:2px solid var(--navy2);background:var(--purple-soft);color:var(--ink);border-radius:10px;padding:6px 12px;cursor:pointer;min-width:42px}
+.tile.used{opacity:.25;cursor:default}
+.preview{font-size:22px;margin-top:10px;min-height:34px}
+/* proofread */
+.passage{font-size:21px;line-height:2.1;background:#fff;border:2px solid var(--line);border-radius:12px;padding:16px}
+.w{cursor:pointer;border-radius:6px;padding:2px 3px;border-bottom:2px dotted transparent}
+.w:hover{background:var(--gold-soft)}
+.w.sel{background:#ffd56b;border-bottom-color:#a36d00}
+.w.err-found{background:#bfe8d3} .w.err-missed{background:#f6c3bb;text-decoration:underline wavy var(--red)}
+.w.false{background:#e2e2e2;text-decoration:line-through}
+/* final */
+.code-row{display:flex;gap:10px;justify-content:center;margin:16px 0}
+.code-row input{width:64px;height:76px;text-align:center;font-family:"Fredoka";font-size:38px;padding:0}
+/* results */
+table{width:100%;border-collapse:collapse;font-size:16px}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+.bar{height:12px;border-radius:99px;background:#e9e1cc;overflow:hidden;min-width:80px}
+.bar>div{height:100%}
+.big-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}
+.big-stats div{background:var(--blue-soft);border-radius:12px;padding:10px;text-align:center}
+.big-stats b{display:block;font-family:"Fredoka";font-size:28px}
+@media(max-width:600px){.big-stats{grid-template-columns:1fr 1fr}}
+.muted{color:var(--muted);font-size:16px}
+.shake{animation:shake .35s} @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.pop{animation:pop .4s} @keyframes pop{50%{transform:scale(1.04)}}
+@media print{.hud,.no-print{display:none!important}}
+</style>
+</head>
+<body>
+<div class="hud" id="hud" hidden>
+  <div class="in">
+    <div>🧑‍🎓 <b id="hud-name"></b></div>
+    <div class="locks" id="hud-locks"></div>
+    <div>⏱️ <b id="hud-time">0:00</b> &nbsp; ❌ <b id="hud-miss">0</b></div>
+  </div>
+</div>
+<main class="wrap" id="app"></main>
+
+<script src="config.js"></script>
+<script src="questions.js"></script>
+<script>
+"use strict";
+const CFG = Object.assign({RESULTS_URL:"",CLASSES:[],WRONG_ANSWER_WAIT:10}, window.ESCAPE_CONFIG||{});
+const KEY = "lolv-current", HIST = "lolv-history";
+const $ = id => document.getElementById(id);
+const app = $("app");
+
+const ROOMS = [
+  { key:"interjections", icon:"😲", title:"The Gasping Gallery", skill:"Interjections", base:5,
+    goal:"Answer 5 interjection challenges correctly.",
+    story:"Paintings in this gallery gasp, sigh, and shout. Find their interjections and punctuate their feelings to unlock the door.",
+    rules:[
+      "An <b>interjection</b> is a word or phrase that shows sudden feeling: <i>Wow, Ouch, Oh, Well, Hooray, Oops, Yikes</i>.",
+      "<b>Strong</b> feeling → exclamation point: <i>Ouch! That hurts.</i>",
+      "<b>Mild</b> feeling → comma: <i>Oh, I forgot my coat.</i>",
+      "The word after an exclamation point starts a new sentence, so it gets a <b>capital</b> letter. After a comma, it stays lowercase.",
+      "Some words only <i>look</i> like interjections. <i>The well is deep</i>: here, well is a noun.",
+    ]},
+  { key:"sort", icon:"📚", title:"The Sorting Stacks", skill:"Direct vs. Indirect", base:6,
+    goal:"Sort a full shelf of 6 sentences with zero mistakes.",
+    story:"The books have fallen off the shelves! Decide if each sentence is a correct direct quotation, a correct indirect quotation, or written incorrectly.",
+    rules:[
+      "A <b>direct quotation</b> gives a speaker's <i>exact words</i> inside quotation marks: <i>Kim said, \"I am ready.\"</i>",
+      "An <b>indirect quotation</b> tells <i>what</i> someone said without their exact words. It uses <b>no quotation marks</b> and often uses <i>that, if,</i> or <i>whether</i>: <i>Kim said that she was ready.</i>",
+      "Indirect quotations do <b>not</b> use a comma after <i>said</i>.",
+      "Commas and periods go <b>inside</b> closing quotation marks.",
+    ]},
+  { key:"punctuate", icon:"✍️", title:"The Quotation Workshop", skill:"Punctuating Quotations", base:4,
+    goal:"Correctly punctuate 4 direct quotations.",
+    story:"The voices have escaped their quotation marks! Type each sentence with the correct capital letters, commas, quotation marks, and end marks.",
+    rules:[
+      "Tag first: <i>Mom said, \"Clean your room.\"</i> (comma after the tag, capital letter to start the quote)",
+      "Tag last: <i>\"Clean your room,\" said Mom.</i> (comma inside the quotation marks, period at the end)",
+      "Questions and exclamations: <i>\"Are you ready?\" asked Coach.</i> (no extra comma)",
+      "Split, one sentence: <i>\"If it rains,\" said Ty, \"we stay in.\"</i> (second part starts lowercase)",
+      "Split, two sentences: <i>\"I'm tired,\" said Ana. \"Let's rest.\"</i> (period after the tag, capital letter)",
+    ]},
+  { key:"convert", icon:"🔁", title:"The Echo Chamber", skill:"Converting Quotations", base:3,
+    goal:"Rebuild 3 sentences by switching direct ↔ indirect.",
+    story:"Every voice here echoes back changed. Use the word tiles to rebuild each sentence the other way. Watch out: some tiles are traps!",
+    rules:[
+      "Direct → indirect: remove the quotation marks, often add <i>that</i> or <i>if</i>, and change pronouns: <i>I → he/she, your → our</i>.",
+      "Verbs usually shift back in time: <i>am → was, can → could, is → was</i>.",
+      "Indirect questions end with a <b>period</b>, not a question mark: <i>Ella asked if she could sit here.</i>",
+      "Indirect → direct: write the exact words inside quotation marks with the correct comma and capital letter.",
+    ]},
+  { key:"proofread", icon:"🔍", title:"Professor Quill's Office", skill:"Proofreading", base:1,
+    goal:"Find every error in one passage, with no wrong clicks.",
+    story:"Professor Quill's diary holds the last digit, but it is full of mistakes. Click every word or mark that is wrong. Clicking correct words counts against you!",
+    rules:[
+      "Check every quotation: comma or end mark <b>inside</b> the closing quotation mark.",
+      "Check for a comma between the speaker tag and the quote.",
+      "Check capital letters at the start of each quotation.",
+      "Indirect quotations should have <b>no</b> quotation marks and no comma after <i>said</i>.",
+      "Every interjection needs a comma or an exclamation point.",
+    ]},
+];
+
+// ---------- helpers ----------
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const normQ = s => String(s).replace(/[“”„‟″«»]/g,'"').replace(/[‘’‚′`]/g,"'");
+const squash = s => normQ(s).replace(/\s+/g,"");
+const letters = s => normQ(s).toLowerCase().replace(/[^a-z0-9']/g,"");
+const wordsOnly = s => normQ(s).toLowerCase().replace(/[^a-z' ]/g," ").replace(/\s+/g," ").trim();
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const tokenize = s => normQ(s).match(/Mr\. Lee|[A-Za-z']+|[.,!?"]/g) || [];
+function smartJoin(toks){
+  let out="", q=0;
+  toks.forEach((t,i)=>{
+    if(t==='"'){ const opening = q%2===0; q++;
+      if(opening){ out += (i && !/[ ]$/.test(out) ? " " : "") + t; }
+      else out += t;
+    } else if(/^[.,!?]$/.test(t)) out += t;
+    else { const prev = toks[i-1]; const afterOpen = prev==='"' && q%2===1;
+      out += (i===0 || afterOpen) ? t : " "+t; }
+  });
+  return out;
+}
+const fmtTime = ms => { const s=Math.max(0,Math.floor(ms/1000)); return Math.floor(s/60)+":"+String(s%60).padStart(2,"0"); };
+const pct = (c,w) => (c+w) ? Math.round(100*c/(c+w)) : 0;
+
+// ---------- state ----------
+let S = null;
+function load(){ try{ S = JSON.parse(localStorage.getItem(KEY)); }catch(e){ S=null; } }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+function newSession(name, cls){
+  S = { id: Date.now().toString(36)+Math.random().toString(36).slice(2,7), name, cls,
+    start: Date.now(), end: null, room: 0, digits: ROOMS.map(()=>Math.floor(Math.random()*10)),
+    stats: ROOMS.map(()=>({c:0,w:0})), missed: [], codeTries: 0, rp: null, done:false };
+  save(); report();
+}
+function totals(){ return S.stats.reduce((a,s)=>({c:a.c+s.c,w:a.w+s.w}),{c:0,w:0}); }
+
+// ---------- reporting ----------
+function payload(){
+  const t = totals();
+  const p = {
+    sessionId:S.id, name:S.name, className:S.cls,
+    status: S.done ? "ESCAPED" : (S.room>=ROOMS.length ? "At final door" : "In room "+(S.room+1)+" of "+ROOMS.length),
+    roomsDone: Math.min(S.room, ROOMS.length),
+    startedAt:new Date(S.start).toLocaleString(), updatedAt:new Date().toLocaleString(),
+    minutes: Math.round(((S.end||Date.now())-S.start)/600)/100,
+    correct:t.c, wrong:t.w, accuracy:pct(t.c,t.w),
+    missed: S.missed.map(m=>`[${m.skill}] ${m.q} | wrote: ${m.given} | correct: ${m.expected}`).join("\n").slice(0,45000),
+  };
+  ROOMS.forEach((r,i)=>{ const s=S.stats[i]; p[r.key] = (s.c+s.w) ? `${s.c}/${s.c+s.w} (${pct(s.c,s.w)}%)` : "—"; });
+  return p;
+}
+function report(){
+  const p = payload();
+  try{ const h = JSON.parse(localStorage.getItem(HIST)||"[]").filter(x=>x.sessionId!==p.sessionId);
+       h.push(p); localStorage.setItem(HIST, JSON.stringify(h.slice(-300))); }catch(e){}
+  if(!CFG.RESULTS_URL) return;
+  try{ fetch(CFG.RESULTS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(p)}).catch(()=>{}); }catch(e){}
+}
+
+// ---------- HUD ----------
+function hud(){
+  if(!S){ $("hud").hidden=true; return; }
+  $("hud").hidden=false;
+  $("hud-name").textContent = S.name;
+  $("hud-locks").innerHTML = ROOMS.map((r,i)=>`<div class="lock ${i<S.room?'open':''} ${i===S.room&&!S.done?'now':''}" title="${esc(r.title)}">${i<S.room?'🔓':'🔒'}</div>`).join("");
+  $("hud-miss").textContent = totals().w;
+  $("hud-time").textContent = fmtTime((S.end||Date.now())-S.start);
+}
+setInterval(()=>{ if(S && !S.done) $("hud-time").textContent = fmtTime(Date.now()-S.start); },1000);
+
+// ---------- screens ----------
+function render(){
+  hud(); window.scrollTo(0,0);
+  if(!S) return renderStart();
+  if(S.done) return renderResults();
+  if(S.room>=ROOMS.length) return renderFinal();
+  if(!S.rp) return renderMap();
+  ({interjections:renderQuiz, punctuate:renderQuiz, convert:renderQuiz, sort:renderSort, proofread:renderProof})[ROOMS[S.room].key]();
+}
+
+function renderStart(){
+  const opts = CFG.CLASSES.map(c=>`<option>${esc(c)}</option>`).join("");
+  app.innerHTML = `
+  <div class="hero">
+    <div class="icon">🏛️📜</div>
+    <h1>The Library of Lost Voices</h1>
+    <p>Professor Quill has locked you inside the library overnight! Every voice in the books has escaped its quotation marks. To get out, you must unlock <b>5 rooms</b> by mastering <b>direct quotations, indirect quotations,</b> and <b>interjections</b>.</p>
+    <p>⚠️ Wrong answers set off the alarm: you'll have to wait, and some rooms will ask you for <b>more</b> correct answers. Think before you click!</p>
+  </div>
+  <div class="card">
+    <h2>Sign in, Explorer</h2>
+    <div class="grid2">
+      <div><label for="fn">First name</label><input type="text" id="fn" autocomplete="off" maxlength="30"></div>
+      <div><label for="ln">Last name</label><input type="text" id="ln" autocomplete="off" maxlength="30"></div>
+    </div>
+    ${opts?`<label for="cls">Class</label><select id="cls"><option value="">Choose your class…</option>${opts}</select>`:""}
+    <p id="start-err" style="color:var(--red);margin-top:10px"></p>
+    <button class="btn gold" id="go" style="margin-top:6px">Enter the Library →</button>
+  </div>`;
+  $("go").onclick = () => {
+    const fn=$("fn").value.trim(), ln=$("ln").value.trim(), cls=$("cls")?$("cls").value:"";
+    if(fn.length<2 || ln.length<1){ $("start-err").textContent="Please type your first AND last name."; return; }
+    if($("cls") && !cls){ $("start-err").textContent="Please choose your class."; return; }
+    newSession(fn+" "+ln, cls); render();
+  };
+}
+
+function renderMap(){
+  const r = ROOMS[S.room];
+  app.innerHTML = `
+  <h2>Library Map</h2>
+  <p class="muted">Rooms unlock in order. Each room gives you one digit of the final escape code. Write them down!</p>
+  <div class="rooms">${ROOMS.map((x,i)=>`
+    <div class="room-tile ${i<S.room?'done':i===S.room?'current':'locked'}">
+      <div class="ico">${i<S.room?'✅':i===S.room?x.icon:'🔒'}</div>
+      <div><h3 style="margin:0">Room ${i+1}: ${esc(x.title)}</h3><div class="muted">${esc(x.skill)} · ${esc(x.goal)}</div></div>
+      ${i<S.room?`<div class="digit">${S.digits[i]}</div>`:""}
+    </div>`).join("")}
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3>${r.icon} Next: ${esc(r.title)}</h3>
+    <p>${esc(r.story)}</p>
+    <button class="btn gold" id="enter">Enter Room ${S.room+1} →</button>
+  </div>`;
+  $("enter").onclick = () => { startRoom(); render(); };
+}
+
+function rulesBox(r){ return `<details class="rules"><summary>📜 Clue Scroll: rules for this room</summary><ul>${r.rules.map(x=>`<li>${x}</li>`).join("")}</ul></details>`; }
+
+function pickIndex(bank, seen){
+  let pool = bank.map((_,i)=>i).filter(i=>!seen.includes(i));
+  if(!pool.length){ seen.length=0; pool = bank.map((_,i)=>i); }
+  const i = pool[Math.floor(Math.random()*pool.length)]; seen.push(i); return i;
+}
+function startRoom(){
+  const r = ROOMS[S.room];
+  S.rp = { got:0, need:r.base, seen:[], cool:0, fb:null };
+  nextItem(); save();
+}
+function nextItem(){
+  const r = ROOMS[S.room], rp = S.rp; rp.fb=null; rp.sel=[]; rp.ans={}; rp.draft=null; rp.errsFound=null;
+  if(r.key==="sort"){
+    const B = BANK.sort, cats=["direct","indirect","incorrect"];
+    const pick = []; cats.forEach(c=>{ const pool=shuffle(B.map((x,i)=>i).filter(i=>B[i].cat===c && !rp.seen.includes(i))); const fallback=shuffle(B.map((x,i)=>i).filter(i=>B[i].cat===c)); pick.push((pool[0]??fallback[0])); });
+    const rest = shuffle(B.map((x,i)=>i).filter(i=>!pick.includes(i) && !rp.seen.includes(i)));
+    const rest2 = shuffle(B.map((x,i)=>i).filter(i=>!pick.includes(i)));
+    while(pick.length<6) pick.push((rest.length?rest:rest2).shift());
+    rp.set = shuffle(pick); rp.seen.push(...rp.set); if(rp.seen.length>B.length-3) rp.seen=[];
+  } else if(r.key==="proofread"){
+    rp.cur = pickIndex(BANK.proofread, rp.seen);
+  } else {
+    rp.cur = pickIndex(BANK[r.key], rp.seen);
+    if(r.key==="convert") rp.order = shuffle(BANK.convert[rp.cur].tiles.map((_,i)=>i));
+  }
+}
+function cooldownLeft(){ return Math.max(0, Math.ceil((S.rp.cool-Date.now())/1000)); }
+function penalize(r, q, given, expected){
+  const i = S.room; S.stats[i].w++;
+  S.missed.push({skill:r.skill, q, given, expected});
+  S.rp.cool = Date.now() + CFG.WRONG_ANSWER_WAIT*1000;
+}
+function progressBar(){ const rp=S.rp; return `<div class="row" style="justify-content:space-between"><b>Progress: ${rp.got} / ${rp.need}</b>${rp.need>ROOMS[S.room].base?`<span class="tag strong">+${rp.need-ROOMS[S.room].base} extra (alarm penalty)</span>`:""}</div><div class="progress"><div style="width:${100*rp.got/rp.need}%"></div></div>`; }
+function roomHeader(r){ return `<h2>${r.icon} Room ${S.room+1}: ${esc(r.title)}</h2><p class="muted">${esc(r.goal)} ${["sort","proofread"].includes(r.key)?"A mistake means starting over with new sentences.":"Wrong answers add an extra question (up to 3)."}</p>${rulesBox(r)}`; }
+
+// Shared "next" button with cooldown
+function wireNext(btnId, onNext){
+  const b = $(btnId); if(!b) return;
+  const tick = () => { const left = cooldownLeft();
+    if(left>0){ b.disabled=true; b.textContent=`🚨 Alarm! Wait ${left}s…`; setTimeout(tick,250); }
+    else { b.disabled=false; b.textContent = b.dataset.label; } };
+  b.dataset.label = b.textContent; tick();
+  b.onclick = onNext;
+}
+
+// ----- quiz rooms (interjections, punctuate, convert) -----
+function renderQuiz(){
+  const r = ROOMS[S.room], rp=S.rp, item = BANK[r.key][rp.cur];
+  let body = "";
+  if(r.key==="interjections" && item.type==="identify"){
+    body = `<p><b>Find the interjection.</b> Type it exactly. If the sentence has <b>no</b> interjection, type <b>none</b>.</p>
+      <div class="prompt">${esc(item.text)}</div>
+      <input type="text" id="ans" autocomplete="off" placeholder="Type the interjection or none" value="${esc(rp.draft||"")}">`;
+  } else if(r.key==="interjections" || r.key==="punctuate"){
+    const feel = item.feeling ? `<span class="tag ${item.feeling}">The speaker feels ${item.feeling==="strong"?"STRONG emotion 💥":"MILD emotion 🙂"}</span>` : "";
+    body = `<p><b>Fix this sentence.</b> Add capital letters and all punctuation (commas, quotation marks, end marks). <u>Do not change the words.</u></p>
+      ${feel}<div class="prompt">${esc(item.raw)}</div>
+      <textarea id="ans" spellcheck="false" autocomplete="off">${esc(rp.draft||item.raw)}</textarea>
+      <div class="keys">${['"',',','.','!','?'].map(k=>`<button type="button" data-k='${k}'>${esc(k)}</button>`).join("")}<span class="muted" style="align-self:center">Tap to insert at your cursor</span></div>`;
+  } else {
+    const chosen = rp.sel||[];
+    body = `<p><b>${item.dir==="toIndirect"?"Change this DIRECT quotation into an INDIRECT quotation.":"Change this INDIRECT quotation into a DIRECT quotation."}</b> Click tiles to build your sentence. Click a tile in your sentence to remove it. Not every tile belongs!</p>
+      <div class="prompt">${esc(item.given)}</div>
+      <div class="build" id="build">${chosen.length?chosen.map((ti,k)=>`<button class="tile" data-rm="${k}">${esc(item.tiles[ti])}</button>`).join(""):'<span class="muted">Your sentence goes here…</span>'}</div>
+      <div class="preview" id="preview">${esc(smartJoin(chosen.map(ti=>item.tiles[ti])))}</div>
+      <div class="tiles">${rp.order.map(ti=>`<button class="tile ${chosen.includes(ti)?'used':''}" data-add="${ti}" ${chosen.includes(ti)?'disabled':''}>${esc(item.tiles[ti])}</button>`).join("")}</div>
+      <div class="row" style="margin-top:10px"><button class="btn ghost small" id="clear">Clear</button></div>`;
+  }
+  app.innerHTML = `${roomHeader(r)}<div class="card">${progressBar()}${body}
+    <div id="fbbox">${rp.fb||""}</div>
+    <div class="row" style="margin-top:14px">${rp.fb&&rp.fbDone?`<button class="btn gold" id="next">Next question →</button>`:`<button class="btn" id="check">Check answer</button>`}</div></div>`;
+
+  const ans = $("ans");
+  if(ans && !rp.fbDone){ ans.focus(); if(ans.tagName==="INPUT") ans.onkeydown=e=>{ if(e.key==="Enter") check(); }; }
+  document.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{ const t=$("ans"); const s=t.selectionStart, e=t.selectionEnd; t.value=t.value.slice(0,s)+b.dataset.k+t.value.slice(e); t.focus(); t.selectionStart=t.selectionEnd=s+1; });
+  document.querySelectorAll("[data-add]").forEach(b=>b.onclick=()=>{ if(rp.fbDone) return; rp.sel.push(+b.dataset.add); save(); renderQuiz(); });
+  document.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{ if(rp.fbDone) return; rp.sel.splice(+b.dataset.rm,1); save(); renderQuiz(); });
+  if($("clear")) $("clear").onclick=()=>{ if(rp.fbDone) return; rp.sel=[]; save(); renderQuiz(); };
+  if($("check")) $("check").onclick = check;
+  if($("next")) wireNext("next", ()=>{ rp.fbDone=false; if(rp.got>=rp.need) return roomCleared(); nextItem(); save(); renderQuiz(); });
+  if(rp.fbDone && ans) ans.disabled = true;
+
+  function check(){
+    let given, ok, expected, prompt, why = item.why||"";
+    if(r.key==="interjections" && item.type==="identify"){
+      given = $("ans").value.trim(); if(!given) return;
+      ok = item.answers.includes(wordsOnly(given));
+      expected = item.answers[0]==="none" ? "none" : item.answers[0].replace(/^./,c=>c.toUpperCase());
+      prompt = item.text;
+    } else if(r.key==="interjections" || r.key==="punctuate"){
+      given = $("ans").value.trim(); if(!given) return;
+      if(letters(given)!==letters(item.raw)){
+        $("fbbox").innerHTML = `<div class="fb warn">✋ <b>Careful!</b> It looks like a word was changed, added, removed, or misspelled. Only add capital letters and punctuation. (No penalty this time.)</div>`;
+        return;
+      }
+      ok = item.answers.some(a=>squash(a)===squash(given));
+      expected = item.answers[0]; prompt = item.raw;
+    } else {
+      const toks = rp.sel.map(ti=>item.tiles[ti]); if(!toks.length) return;
+      given = smartJoin(toks);
+      ok = item.answers.some(a=>tokenize(a).join("|")===toks.join("|"));
+      expected = item.answers[0]; prompt = item.given;
+    }
+    rp.draft = given;
+    if(ok){
+      rp.got++; S.stats[S.room].c++;
+      rp.fb = `<div class="fb good pop">✅ <b>Correct!</b> ${rp.got>=rp.need?"That's the last one. The lock is clicking open…":""}</div>`;
+    } else {
+      penalize(r, prompt, given, expected);
+      rp.need = Math.min(rp.need+1, r.base+3);
+      const also = item.answers.length>1 ? `<div class="muted" style="margin-top:6px">Also accepted: ${item.answers.slice(1).map(esc).join(" &nbsp;•&nbsp; ")}</div>` : "";
+      rp.fb = `<div class="fb bad shake">❌ <b>Not quite.</b> You wrote: <span class="answer">${esc(given)}</span><br>Correct answer: <span class="answer">${esc(expected)}</span>${also}${why?`<p style="margin:8px 0 0">💡 ${esc(why)}</p>`:""}<p style="margin:8px 0 0" class="muted">Study the correct answer. You'll get a NEW question next.</p></div>`;
+    }
+    rp.fbDone = true; save(); hud(); renderQuiz();
+  }
+}
+
+// ----- sort room -----
+function renderSort(){
+  const r = ROOMS[S.room], rp=S.rp, B=BANK.sort;
+  const labels = {direct:"Direct ✔", indirect:"Indirect ✔", incorrect:"Incorrect ✘"};
+  app.innerHTML = `${roomHeader(r)}<div class="card">
+    <p><b>Sort every sentence.</b> Is it a <b>correctly written direct quotation</b>, a <b>correctly written indirect quotation</b>, or is it <b>incorrect</b> (has a mistake)? All 6 must be right to unlock the door.</p>
+    ${rp.set.map((bi,k)=>{ const it=B[bi], a=rp.ans[k];
+      const cls = rp.fbDone ? (a===it.cat?"right":"wrong") : "";
+      const fb = rp.fbDone && a!==it.cat ? `<div style="margin-top:6px">Correct: <b>${labels[it.cat]}</b>${it.why?` · ${esc(it.why)}`:""}</div>` : (rp.fbDone && it.why ? `<div class="muted" style="margin-top:6px">${esc(it.why)}</div>`:"");
+      return `<div class="sort-item ${cls}"><div class="s">${k+1}. ${esc(it.text)}</div>
+        ${["direct","indirect","incorrect"].map(c=>`<button class="choice ${a===c?'on':''}" data-k="${k}" data-c="${c}" ${rp.fbDone?'disabled':''}>${labels[c]}</button>`).join("")}${fb}</div>`; }).join("")}
+    <div id="fbbox">${rp.fb||""}</div>
+    <div class="row" style="margin-top:14px">${rp.fbDone?`<button class="btn gold" id="next">${rp.passed?"Unlock the door →":"Try a new shelf →"}</button>`:`<button class="btn" id="check">Check my shelf</button>`}</div></div>`;
+  document.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{ rp.ans[b.dataset.k]=b.dataset.c; save(); renderSort(); });
+  if($("check")) $("check").onclick=()=>{
+    if(Object.keys(rp.ans).length<rp.set.length){ $("fbbox").innerHTML=`<div class="fb warn">Sort all 6 sentences first.</div>`; return; }
+    let right=0;
+    rp.set.forEach((bi,k)=>{ const it=B[bi];
+      if(rp.ans[k]===it.cat){ right++; S.stats[S.room].c++; }
+      else { S.stats[S.room].w++; S.missed.push({skill:r.skill,q:it.text,given:rp.ans[k],expected:it.cat}); } });
+    rp.passed = right===rp.set.length; rp.fbDone=true;
+    if(rp.passed) rp.fb=`<div class="fb good pop">✅ <b>Perfect shelf!</b> 6 out of 6.</div>`;
+    else { rp.cool = Date.now()+CFG.WRONG_ANSWER_WAIT*1000*1.5;
+      rp.fb=`<div class="fb bad shake">❌ <b>${right} out of 6.</b> The shelf collapses! Read the corrections above. You'll get a brand-new shelf of sentences.</div>`; }
+    save(); hud(); renderSort();
+  };
+  if($("next")) wireNext("next", ()=>{ rp.fbDone=false; if(rp.passed) return roomCleared(); nextItem(); save(); renderSort(); });
+}
+
+// ----- proofreading room -----
+function parsePassage(text){
+  const units=[], errs=[]; const re=/\[\[([\s\S]+?)\|([\s\S]+?)\]\]/g; let last=0, m;
+  const addWords=(s,eid)=>s.split(/\s+/).filter(Boolean).forEach(w=>units.push({w,e:eid}));
+  while((m=re.exec(text))){ addWords(text.slice(last,m.index),-1); errs.push({wrong:m[1],why:m[2]}); addWords(m[1],errs.length-1); last=re.lastIndex; }
+  addWords(text.slice(last),-1); return {units,errs};
+}
+function renderProof(){
+  const r = ROOMS[S.room], rp=S.rp, P=BANK.proofread[rp.cur], {units,errs}=parsePassage(P.text);
+  const sel = rp.sel||[];
+  if(rp.fbDone && rp.errsFound) errs.forEach((e,i)=>e.found=rp.errsFound[i]);
+  app.innerHTML = `${roomHeader(r)}<div class="card">
+    <h3>📓 "${esc(P.title)}"</h3>
+    <p>This passage has <b>exactly ${errs.length} errors</b>. Click the word (with its punctuation) where each error is. Click again to unselect. Selected: <b id="cnt">${sel.length}</b></p>
+    <div class="passage">${units.map((u,k)=>{
+      let c = sel.includes(k)?"sel":"";
+      if(rp.fbDone){ if(u.e>=0) c = errs[u.e].found ? "err-found" : "err-missed"; else if(sel.includes(k)) c="false"; }
+      return `<span class="w ${c}" data-u="${k}">${esc(u.w)}</span>`; }).join(" ")}</div>
+    <div id="fbbox">${rp.fb||""}</div>
+    <div class="row" style="margin-top:14px">${rp.fbDone?`<button class="btn gold" id="next">${rp.passed?"Unlock the door →":"Try another page →"}</button>`:`<button class="btn" id="check">Check my corrections</button>`}</div></div>`;
+  if(!rp.fbDone) document.querySelectorAll(".w").forEach(s=>s.onclick=()=>{ const k=+s.dataset.u; rp.sel=rp.sel||[]; const i=rp.sel.indexOf(k); i>=0?rp.sel.splice(i,1):rp.sel.push(k); save(); s.classList.toggle("sel"); $("cnt").textContent=rp.sel.length; });
+  if($("check")) $("check").onclick=()=>{
+    if(!sel.length){ $("fbbox").innerHTML=`<div class="fb warn">Click the errors you find first.</div>`; return; }
+    const foundIds = new Set(sel.map(k=>units[k].e).filter(e=>e>=0));
+    const falses = sel.filter(k=>units[k].e<0);
+    errs.forEach((e,i)=>e.found=foundIds.has(i));
+    const found = foundIds.size, missed = errs.length-found;
+    S.stats[S.room].c += found; S.stats[S.room].w += missed + falses.length;
+    errs.forEach(e=>{ if(!e.found) S.missed.push({skill:r.skill,q:`"${P.title}": ${e.wrong}`,given:"(not found)",expected:e.why}); });
+    falses.forEach(k=>S.missed.push({skill:r.skill,q:`"${P.title}"`,given:`clicked correct word: ${units[k].w}`,expected:"(no error there)"}));
+    rp.passed = missed===0 && falses.length===0; rp.fbDone=true;
+    rp.errsFound = errs.map(e=>e.found);
+    const list = `<ol style="margin:8px 0 0 22px">${errs.map(e=>`<li>${e.found?"✅":"❌"} <b>${esc(e.wrong)}</b>: ${esc(e.why)}</li>`).join("")}</ol>`;
+    if(rp.passed) rp.fb=`<div class="fb good pop">✅ <b>Every error found, no wrong clicks!</b>${list}</div>`;
+    else { rp.cool = Date.now()+CFG.WRONG_ANSWER_WAIT*1000*1.5;
+      rp.fb=`<div class="fb bad shake">❌ You found <b>${found} of ${errs.length}</b> errors${falses.length?` and clicked <b>${falses.length}</b> correct word${falses.length>1?"s":""} (shown crossed out)`:""}. Green = found, red = missed. Study the list, then try a different page.${list}</div>`; }
+    save(); hud(); renderProof();
+  };
+  if($("next")) wireNext("next", ()=>{ rp.fbDone=false; if(rp.passed) return roomCleared(); nextItem(); save(); renderProof(); });
+}
+
+function roomCleared(){
+  const i = S.room; S.room++; S.rp=null; save(); report(); hud();
+  app.innerHTML = `<div class="hero pop"><div class="icon">🔓</div><h1>Room ${i+1} Unlocked!</h1>
+    <p>You found a code digit:</p><div class="display" style="font-size:80px;color:var(--gold)">${S.digits[i]}</div>
+    <p>Write it down: you'll need it for the final door.</p></div>
+    <div style="text-align:center"><button class="btn gold" id="cont">${S.room>=ROOMS.length?"Go to the Final Door →":"Back to the Library Map →"}</button></div>`;
+  $("cont").onclick = render;
+}
+
+function renderFinal(){
+  app.innerHTML = `<div class="hero"><div class="icon">🚪</div><h1>The Final Door</h1>
+    <p>Enter the 5 digits you collected, in room order (Room 1 first).</p></div>
+    <div class="card" style="text-align:center">
+      <div class="code-row">${ROOMS.map((_,i)=>`<input type="text" inputmode="numeric" maxlength="1" id="d${i}" aria-label="Digit ${i+1}">`).join("")}</div>
+      <p id="code-msg"></p>
+      <button class="btn gold" id="open">Open the door</button>
+      <p class="muted" style="margin-top:12px">Forgot a digit? Your digits: ${ROOMS.map((_,i)=>`Room ${i+1}: <b>${S.digits[i]}</b>`).join(" · ")}</p>
+    </div>`;
+  const ins = ROOMS.map((_,i)=>$("d"+i));
+  ins.forEach((el,i)=>{ el.oninput=()=>{ el.value=el.value.replace(/\D/g,""); if(el.value && ins[i+1]) ins[i+1].focus(); };
+    el.onkeydown=e=>{ if(e.key==="Backspace" && !el.value && ins[i-1]) ins[i-1].focus(); if(e.key==="Enter") $("open").click(); }; });
+  ins[0].focus();
+  $("open").onclick=()=>{
+    const code = ins.map(x=>x.value).join("");
+    if(code===S.digits.join("")){ S.done=true; S.end=Date.now(); save(); report(); render(); }
+    else { S.codeTries++; save(); $("code-msg").innerHTML=`<span style="color:var(--red)">🚨 Wrong code. Check the order!</span>`; app.querySelector(".code-row").classList.add("shake"); setTimeout(()=>app.querySelector(".code-row")?.classList.remove("shake"),400); }
+  };
+}
+
+function renderResults(){
+  const t = totals(), acc = pct(t.c,t.w);
+  const color = p => p>=85?"var(--green)":p>=70?"var(--gold)":"var(--red)";
+  app.innerHTML = `<div class="hero"><div class="icon">🎉🏆</div><h1>You Escaped, ${esc(S.name.split(" ")[0])}!</h1>
+    <p>The voices are back in their quotation marks, and the Library of Lost Voices is safe.</p></div>
+    <div class="card">
+      <h2>Your Results</h2>
+      <div class="muted">${esc(S.name)}${S.cls?" · "+esc(S.cls):""} · ${new Date(S.end).toLocaleString()}</div>
+      <div class="big-stats">
+        <div><b>${fmtTime(S.end-S.start)}</b>Time</div>
+        <div><b>${acc}%</b>Accuracy</div>
+        <div><b>${t.c}</b>Correct</div>
+        <div><b>${t.w}</b>Mistakes</div>
+      </div>
+      <table><tr><th>Skill</th><th>Score</th><th style="width:35%">Accuracy</th></tr>
+      ${ROOMS.map((r,i)=>{ const s=S.stats[i], p=pct(s.c,s.w); return `<tr><td>${r.icon} ${esc(r.skill)}</td><td>${s.c} / ${s.c+s.w}</td><td><div class="row" style="flex-wrap:nowrap"><div class="bar" style="flex:1"><div style="width:${p}%;background:${color(p)}"></div></div><b>${p}%</b></div></td></tr>`; }).join("")}
+      </table>
+      <p class="muted" style="margin-top:10px">${CFG.RESULTS_URL?"✅ Your results were sent to your teacher.":"Show this screen to your teacher."}</p>
+    </div>
+    <div class="card"><h2>Study List: Questions You Missed</h2>
+      ${S.missed.length?`<table><tr><th>Skill</th><th>Question</th><th>You wrote</th><th>Correct</th></tr>${S.missed.map(m=>`<tr><td>${esc(m.skill)}</td><td>${esc(m.q)}</td><td>${esc(m.given)}</td><td>${esc(m.expected)}</td></tr>`).join("")}</table>`:"<p>None! Perfect run. 🌟</p>"}
+    </div>
+    <div class="row no-print"><button class="btn ghost" onclick="window.print()">🖨️ Print</button>
+      <button class="btn ghost" id="newp">New player on this device</button></div>`;
+  $("newp").onclick=()=>{ if(confirm("Start a new game for a different student?")){ localStorage.removeItem(KEY); S=null; render(); } };
+}
+
+// ---------- boot ----------
+load();
+if(S && !S.done && S.start){
+  // Resuming an unfinished game (e.g., after a refresh). Offer a switch for shared devices.
+  const n = S.name;
+  render();
+  if(!S.rp && S.room===0){ /* nothing special */ }
+  const bar = document.createElement("div"); bar.className="muted no-print"; bar.style.cssText="text-align:center;margin-top:20px";
+  bar.innerHTML = `Not ${esc(n)}? <a href="#" id="switch">Start as a new player</a>`;
+  app.after(bar);
+  $("switch").onclick = e => { e.preventDefault(); if(confirm(`Start a new game? ${n}'s unfinished game will be saved as incomplete.`)){ localStorage.removeItem(KEY); S=null; bar.remove(); render(); } };
+} else render();
+</script>
+</body>
+</html>

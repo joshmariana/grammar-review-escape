@@ -1,0 +1,166 @@
+// ===== QUESTION BANKS =====
+// Every room draws questions at random, so no two students see the same order.
+// "answers" lists every version that counts as correct.
+
+window.BANK = {
+
+  // ---------- ROOM 1: INTERJECTIONS ----------
+  // type "identify": student types the interjection (or "none")
+  // type "fix": student fixes capitalization + punctuation
+  interjections: [
+    { type: "identify", text: `Ouch! I stubbed my toe on the desk.`, answers: ["ouch"] },
+    { type: "identify", text: `Well, I suppose we could try again tomorrow.`, answers: ["well"] },
+    { type: "identify", text: `Hooray! Our class won the spelling bee!`, answers: ["hooray"] },
+    { type: "identify", text: `Yikes! That spider is enormous!`, answers: ["yikes"] },
+    { type: "identify", text: `Hmm, which book should I read next?`, answers: ["hmm"] },
+    { type: "identify", text: `Oops, I spilled a little juice on the floor.`, answers: ["oops"] },
+    { type: "identify", text: `Shh! The baby is finally sleeping.`, answers: ["shh"] },
+    { type: "identify", text: `Hey, wait for me at the corner!`, answers: ["hey"] },
+    { type: "identify", text: `Oh no! The dog ate my homework again.`, answers: ["oh no"] },
+    { type: "identify", text: `The well in Grandpa's garden is very deep.`, answers: ["none"],
+      why: `"Well" is a noun here (a hole for water), not an interjection. It shows no feeling.` },
+    { type: "identify", text: `We walked quickly to the library after lunch.`, answers: ["none"],
+      why: `No word in this sentence shows sudden feeling, so there is no interjection.` },
+    { type: "identify", text: `My little sister yelled, "Wow, look at the fireworks!"`, answers: ["wow"],
+      why: `Interjections can appear inside a quotation. "Wow" shows excitement.` },
+
+    { type: "fix", feeling: "strong", raw: `hooray we are going to the zoo`,
+      answers: [`Hooray! We are going to the zoo.`, `Hooray! We are going to the zoo!`] },
+    { type: "fix", feeling: "mild", raw: `oh i think i left my coat on the bus`,
+      answers: [`Oh, I think I left my coat on the bus.`] },
+    { type: "fix", feeling: "strong", raw: `ouch that bee stung me`,
+      answers: [`Ouch! That bee stung me.`, `Ouch! That bee stung me!`] },
+    { type: "fix", feeling: "mild", raw: `well maybe we should ask the teacher`,
+      answers: [`Well, maybe we should ask the teacher.`] },
+    { type: "fix", feeling: "strong", raw: `wow you built that robot by yourself`,
+      answers: [`Wow! You built that robot by yourself.`, `Wow! You built that robot by yourself!`, `Wow! You built that robot by yourself?`] },
+    { type: "fix", feeling: "mild", raw: `um i'm not sure where the gym is`,
+      answers: [`Um, I'm not sure where the gym is.`] },
+    { type: "fix", feeling: "strong", raw: `yikes the river is rising fast`,
+      answers: [`Yikes! The river is rising fast.`, `Yikes! The river is rising fast!`] },
+    { type: "fix", feeling: "mild", raw: `hmm this puzzle is tricky`,
+      answers: [`Hmm, this puzzle is tricky.`] },
+  ],
+
+  // ---------- ROOM 2: DIRECT, INDIRECT, OR INCORRECT? ----------
+  sort: [
+    { text: `Ms. Rivera said, "Please open your books to page 12."`, cat: "direct" },
+    { text: `"Can we have recess outside today?" asked Jayden.`, cat: "direct" },
+    { text: `"I finished my science project," said Priya.`, cat: "direct" },
+    { text: `"Watch out for the puddle!" yelled Marcus.`, cat: "direct" },
+    { text: `"If we hurry," said Dad, "we can catch the early movie."`, cat: "direct" },
+    { text: `Grandma whispered, "The cookies are almost ready."`, cat: "direct" },
+    { text: `"That was the best game ever!" shouted Ella.`, cat: "direct" },
+    { text: `"I'm going to the library," said Ana. "Do you want to come?"`, cat: "direct" },
+
+    { text: `Ms. Rivera told us to open our books to page 12.`, cat: "indirect" },
+    { text: `Jayden asked if we could have recess outside today.`, cat: "indirect" },
+    { text: `Priya said that she finished her science project.`, cat: "indirect" },
+    { text: `Marcus yelled that we should watch out for the puddle.`, cat: "indirect" },
+    { text: `Dad said we could catch the early movie if we hurried.`, cat: "indirect" },
+    { text: `The coach explained that practice would start at four o'clock.`, cat: "indirect" },
+    { text: `Lily wondered whether the library was open on Sunday.`, cat: "indirect" },
+
+    { text: `Priya said that "she finished her science project."`, cat: "incorrect",
+      why: `This is an indirect quotation (it uses "that" and "she"), so it should NOT have quotation marks.` },
+    { text: `"Can we go outside today"? asked Jayden.`, cat: "incorrect",
+      why: `The question mark belongs to the quote, so it goes INSIDE the quotation marks: "...today?"` },
+    { text: `Ms. Rivera said "Please open your books."`, cat: "incorrect",
+      why: `A comma is needed after "said" before the quotation begins.` },
+    { text: `"I love this song", said Ava.`, cat: "incorrect",
+      why: `Commas go INSIDE the closing quotation mark: "I love this song," said Ava.` },
+    { text: `Marcus yelled, "watch out for the puddle!"`, cat: "incorrect",
+      why: `The first word of a direct quotation must be capitalized: "Watch...` },
+    { text: `Jayden asked "if we could have recess outside today."`, cat: "incorrect",
+      why: `"Asked if..." is an indirect quotation, so it needs no quotation marks.` },
+    { text: `"I'm hungry." said Noah.`, cat: "incorrect",
+      why: `When the speaker tag comes after the quote, use a comma, not a period: "I'm hungry," said Noah.` },
+    { text: `"I think," said Leo, "That we are lost."`, cat: "incorrect",
+      why: `This is ONE sentence split in two, so the second part starts with a lowercase letter: "that we are lost."` },
+    { text: `The teacher said, that the test is on Friday.`, cat: "incorrect",
+      why: `Indirect quotations do not use a comma after "said."` },
+  ],
+
+  // ---------- ROOM 3: PUNCTUATE THE DIRECT QUOTATION ----------
+  punctuate: [
+    { raw: `mom said please clean your room`, answers: [`Mom said, "Please clean your room."`] },
+    { raw: `where are my shoes asked Tyler`, answers: [`"Where are my shoes?" asked Tyler.`] },
+    { raw: `i can't wait for the field trip said Rosa`,
+      answers: [`"I can't wait for the field trip," said Rosa.`, `"I can't wait for the field trip!" said Rosa.`] },
+    { raw: `the lifeguard shouted get out of the pool`,
+      answers: [`The lifeguard shouted, "Get out of the pool!"`, `The lifeguard shouted, "Get out of the pool."`] },
+    { raw: `my favorite subject said Kai is math`, answers: [`"My favorite subject," said Kai, "is math."`] },
+    { raw: `if it rains said Coach Miller we will practice inside`,
+      answers: [`"If it rains," said Coach Miller, "we will practice inside."`] },
+    { raw: `this is my dog said Ben his name is Rocket`,
+      answers: [`"This is my dog," said Ben. "His name is Rocket."`] },
+    { raw: `the principal announced school will close early today`,
+      answers: [`The principal announced, "School will close early today."`] },
+    { raw: `did you feed the fish asked Dad`, answers: [`"Did you feed the fish?" asked Dad.`] },
+    { raw: `Zoe asked can i borrow your pencil`, answers: [`Zoe asked, "Can I borrow your pencil?"`] },
+    { raw: `we won the game cheered the team`,
+      answers: [`"We won the game!" cheered the team.`, `"We won the game," cheered the team.`] },
+    { raw: `wow said Mia that is a huge pumpkin`,
+      answers: [`"Wow!" said Mia. "That is a huge pumpkin."`, `"Wow!" said Mia. "That is a huge pumpkin!"`, `"Wow," said Mia, "that is a huge pumpkin."`, `"Wow," said Mia, "that is a huge pumpkin!"`] },
+    { raw: `oh no cried Sam i dropped my ice cream`,
+      answers: [`"Oh no!" cried Sam. "I dropped my ice cream."`, `"Oh no!" cried Sam. "I dropped my ice cream!"`, `"Oh no," cried Sam, "I dropped my ice cream."`, `"Oh no," cried Sam, "I dropped my ice cream!"`] },
+    { raw: `the sign says do not feed the animals`,
+      answers: [`The sign says, "Do not feed the animals."`, `The sign says, "Do not feed the animals!"`] },
+    { raw: `well said Grandpa let me tell you a story`,
+      answers: [`"Well," said Grandpa, "let me tell you a story."`, `"Well," said Grandpa. "Let me tell you a story."`] },
+    { raw: `are we there yet asked my little brother`, answers: [`"Are we there yet?" asked my little brother.`] },
+  ],
+
+  // ---------- ROOM 4: CONVERT (build the sentence from tiles) ----------
+  // "tiles" are the pieces the student can use. Not every tile is needed!
+  convert: [
+    { dir: "toIndirect", given: `Sam said, "I am hungry."`,
+      tiles: ["Sam", "said", "that", "he", "was", "hungry", ".", "I", "am", `"`, ",", "?"],
+      answers: [`Sam said that he was hungry.`, `Sam said he was hungry.`] },
+    { dir: "toIndirect", given: `Ella asked, "Can I sit here?"`,
+      tiles: ["Ella", "asked", "if", "she", "could", "sit", "here", ".", "?", "I", "Can", `"`, ","],
+      answers: [`Ella asked if she could sit here.`] },
+    { dir: "toIndirect", given: `Mr. Lee said, "Your essays are excellent."`,
+      tiles: ["Mr. Lee", "said", "that", "our", "essays", "were", "excellent", ".", "Your", "are", `"`, ",", "!"],
+      answers: [`Mr. Lee said that our essays were excellent.`, `Mr. Lee said our essays were excellent.`] },
+    { dir: "toIndirect", given: `Ava shouted, "I found the treasure!"`,
+      tiles: ["Ava", "shouted", "that", "she", "had", "found", "the", "treasure", ".", "I", "!", `"`, ","],
+      answers: [`Ava shouted that she had found the treasure.`, `Ava shouted that she found the treasure.`] },
+    { dir: "toIndirect", given: `Noah asked, "Where is my backpack?"`,
+      tiles: ["Noah", "asked", "where", "his", "backpack", "was", ".", "?", "my", "is", `"`, ","],
+      answers: [`Noah asked where his backpack was.`] },
+    { dir: "toDirect", given: `Leo said that he was tired.`,
+      tiles: ["Leo", "said", ",", `"`, `"`, "I", "am", "tired", ".", "he", "was", "that"],
+      answers: [`Leo said, "I am tired."`, `"I am tired," said Leo.`] },
+    { dir: "toDirect", given: `Mia asked whether she could play.`,
+      tiles: ["Mia", "asked", ",", `"`, `"`, "Can", "I", "play", "?", ".", "whether", "she", "could"],
+      answers: [`Mia asked, "Can I play?"`, `"Can I play?" asked Mia.`] },
+    { dir: "toDirect", given: `Grandma said that she loved our drawings.`,
+      tiles: ["Grandma", "said", ",", `"`, `"`, "I", "love", "your", "drawings", ".", "she", "loved", "our", "that"],
+      answers: [`Grandma said, "I love your drawings."`, `"I love your drawings," said Grandma.`] },
+    { dir: "toDirect", given: `Jada told us that she had a new puppy.`,
+      tiles: ["Jada", "said", ",", `"`, `"`, "I", "have", "a", "new", "puppy", ".", "!", "she", "had", "that"],
+      answers: [`Jada said, "I have a new puppy."`, `Jada said, "I have a new puppy!"`, `"I have a new puppy," said Jada.`, `"I have a new puppy!" said Jada.`] },
+  ],
+
+  // ---------- ROOM 5: PROOFREADING ----------
+  // Wrap each error in [[ wrong text | explanation ]]. Errors may span several words.
+  proofread: [
+    {
+      title: "The Field Trip",
+      text: `Ms. Patel said, "Line up by the door." Wow! Everyone was so excited. "Do we get to see the dinosaurs?" asked Omar. Ms. Patel smiled and said that we would see them after lunch. [["I can't wait",|The comma goes inside the quotation marks: "I can't wait," said Lena.]] said Lena. [[Hey|A strong interjection needs an exclamation point (Hey!) or a mild one needs a comma (Hey,).]] look at that bus! [["Is it ours"?|The question mark is part of the quote, so it goes inside: "Is it ours?"]] asked Theo. "Yes," said Ms. Patel, [["And|This continues one sentence, so "and" should be lowercase.]] it is leaving soon." Jada said that [["she wanted the window seat."|This is an indirect quotation, so it should not have quotation marks.]]`,
+    },
+    {
+      title: "The Science Fair",
+      text: `"Look at my volcano!" shouted Ben. Priya asked if it would really erupt. [["Of course it will"|A comma is needed before the closing quotation mark: "Of course it will," Ben said.]] Ben said proudly. Oops, the baking soda spilled everywhere. "Oh no!" cried [[Ben, "my|"Oh no!" is a complete sentence, so it should be: cried Ben. "My volcano...]] volcano is ruined." Mr. Ortiz said, [["don't|The first word of a direct quotation must be capitalized: "Don't worry..."]] worry. We have more." Priya [[said, that|Indirect quotations do not take a comma after "said."]] she would help clean up. [["Thanks."|Use a comma, not a period, before the speaker tag: "Thanks," said Ben.]] said Ben. "You're a great friend."`,
+    },
+    {
+      title: "The Camping Trip",
+      text: `"Pass the marshmallows, please," said Ava. Dad asked, "Who wants the first one?" [["Me"!|The exclamation point belongs to the quote: "Me!"]] shouted Leo. [[Yikes|A strong interjection needs an exclamation point: Yikes!]] the fire popped loudly. "Be careful," Dad [[warned "the|A comma is needed after the speaker tag: warned, "the sticks...]] sticks are hot." Ava said that she was having the best night ever. Leo [[whispered "I|A comma is needed before the quotation: whispered, "I hear...]] hear an owl." Hmm, I think it's just the wind. "Well," laughed Dad. [["it|The quote after "laughed Dad." begins a new sentence, so "It" must be capitalized.]] might be both."`,
+    },
+    {
+      title: "The Big Game",
+      text: `"We can do this!" shouted the captain. Coach Brown said that we needed to pass more. Ugh, the other team scored first. [[Kayla asked, "if|"Asked if" is an indirect quotation. Write: Kayla asked if we could still win.]] we could still win." "Of course," said Coach Brown, "we just need one good play." Then Diego scored from half court. [[Hooray|An interjection needs punctuation after it. This is strong feeling: Hooray! The crowd...]] the crowd went wild! The crowd yelled, [["Go, Diego"!|The exclamation point belongs inside the quotation marks: "Go, Diego!"]] After the game, Diego said, [["it|The first word of the quotation must be capitalized: "It was..."]] was the best day of my life." [["Great job, team".|Before a speaker tag, use a comma inside the quotation marks: "Great job, team," said the coach.]] said the coach.`,
+    },
+  ],
+};
